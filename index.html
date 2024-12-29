@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axteroid</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Spotify-style gradients */
+        .spotify-gradient {
+            background: linear-gradient(180deg, rgba(18,18,18,0) 0%, #121212 100%);
+        }
+
+        .hover-card {
+            transition: background-color 0.3s ease;
+        }
+
+        .hover-card:hover {
+            background-color: #282828;
+        }
+
+        .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .library-container {
+            height: calc(100vh - 280px); /* Adjust based on your header height */
+            overflow-y: auto;
+        }
+
+        /* Hide default scrollbar */
+        .library-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .library-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .library-container::-webkit-scrollbar-thumb {
+            background: #ffffff3d;
+            border-radius: 4px;
+        }
+
+        .library-container::-webkit-scrollbar-thumb:hover {
+            background: #ffffff66;
+        }
+
+        /* For Firefox */
+        .library-container {
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff3d transparent;
+        }
+
+        /* Custom scrollbar for the library section */
+        .library-scrollbar {
+            position: absolute;
+            right: 2px;
+            width: 12px;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .library-scrollbar:hover,
+        .library-container:hover .library-scrollbar {
+            opacity: 1;
+        }
+
+        .library-scrollbar-thumb {
+            position: absolute;
+            width: 6px;
+            right: 2px;
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+
+        .library-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Update library container */
+        .library-container {
+            position: relative;
+            height: calc(100vh - 240px);
+            overflow-y: auto;
+            padding-right: 12px; /* Make room for scrollbar */
+        }
+
+        .sidebar {
+            transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+            width: 280px;
+        }
+
+        /* Text transitions */
+        .sidebar .project-info,
+        .sidebar span:not(.icon-only) {
+            transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+            opacity: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 200px; /* Add this to control text width */
+        }
+
+        /* Main content transition */
+        .ml-\[280px\] {
+            transition: margin-left 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        /* Collapsed states */
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .project-info,
+        .sidebar.collapsed span:not(.icon-only) {
+            opacity: 0;
+            max-width: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Icon centering */
+        .sidebar .flex.items-center {
+            transition: all 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .sidebar.collapsed .flex.items-center {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        /* Button rotation */
+        #sidebarToggle i {
+            transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .sidebar.collapsed #sidebarToggle i {
+            transform: rotate(180deg);
+        }
+
+        /* Remove any conflicting styles */
+        .sidebar.collapsed span:not(.icon-only),
+        .sidebar.collapsed .project-info {
+            display: block !important;
+            visibility: hidden;
+        }
+
+        .sidebar span,
+        .project-info,
+        button span {
+            transition: all 0.2s ease;
+        }
+
+        .sidebar.collapsed .flex.items-center {
+            justify-content: center !important;
+        }
+
+        .sidebar.collapsed .w-12 {
+            margin: 0 auto;
+        }
+
+        /* Adjust icon containers when collapsed */
+        .sidebar.collapsed .flex.items-center gap-4 {
+            gap: 0 !important;
+        }
+
+        /* Hide text elements when collapsed */
+        .sidebar.collapsed span:not(.icon-only),
+        .sidebar.collapsed .project-info {
+            display: none;
+        }
+
+        .main-content {
+            transition: margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-left: 280px;
+        }
+
+        /* Center icons when collapsed */
+        .sidebar.collapsed .flex.items-center {
+            justify-content: center;
+        }
+
+        /* Adjust project icons when collapsed */
+        .sidebar.collapsed .w-12 {
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar .project-info,
+        .sidebar span:not(.icon-only) {
+            transition: all 0.2s ease;
+        }
+
+        .sidebar .flex.items-center {
+            transition: justify-content 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 80px !important;
+        }
+
+        .sidebar.collapsed .project-info,
+        .sidebar.collapsed span:not(.icon-only) {
+            display: none;
+        }
+
+        .sidebar.collapsed .flex.items-center {
+            justify-content: center !important;
+        }
+
+        /* Smooth transition for the toggle button */
+        .sidebar button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Layout -->
+    <div class="flex h-screen">
+        <!-- Left Sidebar -->
+        <div class="w-[280px] bg-black flex flex-col gap-2 p-2 fixed h-full sidebar" id="sidebar">
+            <!-- Add this button at the top -->
+            <button id="sidebarToggle" class="absolute top-2 right-[-12px] z-50 p-1 rounded-full bg-[#282828] hover:bg-[#383838] transition-colors group">
+                <i data-lucide="chevron-left" class="h-4 w-4 text-white/60 group-hover:text-white transition-transform duration-300"></i>
+            </button>
+            <!-- Navigation Menu -->
+            <div class="bg-[#121212] rounded-lg p-4 flex flex-col gap-4">
+                <!-- Home -->
+                <a href="#home" class="flex items-center gap-4 text-[#B3B3B3] hover:text-white">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                    <i data-lucide="home" class="h-6 w-6"></i>
+                    </div>
+                    <span>Home</span>
+                </a>
+
+                <!-- Experience -->
+                <a href="#experience" class="flex items-center gap-4 text-[#B3B3B3] hover:text-white">
+                    <i data-lucide="briefcase" class="h-6 w-6"></i>
+                    <span class="font-bold">Experience</span>
+                </a>
+
+                <!-- Contact -->
+                <a href="#contact" class="flex items-center gap-4 text-[#B3B3B3] hover:text-white">
+                    <i data-lucide="mail" class="h-6 w-6"></i>
+                    <span class="font-bold">Contact</span>
+                </a>
+
+                <!-- Discord -->
+                <a href="https://discord.com/users/yournick" class="flex items-center gap-4 text-[#B3B3B3] hover:text-white">
+                    <i data-lucide="message-circle" class="h-6 w-6"></i>
+                    <span class="font-bold">Discord</span>
+                </a>
+
+                <!-- Projects -->
+                <a href="#projects" class="flex items-center gap-4 text-[#B3B3B3] hover:text-white">
+                    <i data-lucide="shopping-cart" class="h-6 w-6"></i>
+                    <span class="font-bold">BuiltByBit</span>
+                </a>
+
+                <!-- GitHub -->
+                <a href="https://github.com/yourusername" class="flex items-center gap-4 text-[#B3B3B3] hover:text-white">
+                    <i data-lucide="github" class="h-6 w-6"></i>
+                    <span class="font-bold">GitHub</span>
+                </a>
+            </div>
+
+            <!-- Library Section -->
+            <div class="bg-[#121212] rounded-lg flex-1 p-2">
+                <div class="flex items-center justify-between p-2">
+                    <button class="flex items-center gap-2 text-[#B3B3B3] hover:text-white">
+                        <i data-lucide="library" class="h-6 w-6"></i>
+                        <span class="font-bold">My Projects</span>
+                    </button>
+                </div>
+
+                <!-- Library Items -->
+                <div class="mt-2 space-y-2 overflow-y-auto max-h-[calc(100vh-180px)] hide-scrollbar">
+                    <!-- SkyBlock Config -->
+                    <a href="#" class="p-2 flex items-center gap-3 hover-card rounded-md" data-project-id="skyblock">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="box" class="h-6 w-6"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4 class="font-bold text-white project-title">SkyBlock Config</h4>
+                            <p class="text-sm text-[#B3B3B3] project-subtitle">Configuration • Axteroid</p>
+                        </div>
+                    </a>
+
+                    <!-- KitPvP Config -->
+                    <a href="#" class="p-2 flex items-center gap-3 hover-card rounded-md" data-project-id="kitpvp">
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="swords" class="h-6 w-6"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4 class="font-bold text-white project-title">KitPvP Config</h4>
+                            <p class="text-sm text-[#B3B3B3] project-subtitle">Configuration • Axteroid</p>
+                        </div>
+                    </a>
+
+                    <!-- Survival Config -->
+                    <a href="#" class="p-2 flex items-center gap-3 hover-card rounded-md" data-project-id="survival">
+                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-amber-500 rounded flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="tree" class="h-6 w-6"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4 class="font-bold text-white project-title">Survival Config</h4>
+                            <p class="text-sm text-[#B3B3B3] project-subtitle">Configuration • Axteroid</p>
+                        </div>
+                    </a>
+
+                    <!-- Bedwars Config -->
+                    <a href="#" class="p-2 flex items-center gap-3 hover-card rounded-md" data-project-id="bedwars">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="bed" class="h-6 w-6"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4 class="font-bold text-white project-title">Bedwars Config</h4>
+                            <p class="text-sm text-[#B3B3B3] project-subtitle">Configuration • Axteroid</p>
+                        </div>
+                    </a>
+
+                    <!-- Hub Config -->
+                    <a href="#" class="p-2 flex items-center gap-3 hover-card rounded-md" data-project-id="hub">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="home" class="h-6 w-6"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4 class="font-bold text-white project-title">Hub Config</h4>
+                            <p class="text-sm text-[#B3B3B3] project-subtitle">Configuration • Axteroid</p>
+                        </div>
+                    </a>
+
+                    <!-- Practice Config -->
+                    <a href="#" class="p-2 flex items-center gap-3 hover-card rounded-md" data-project-id="practice">
+                        <div class="w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-500 rounded flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="target" class="h-6 w-6"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4 class="font-bold text-white project-title">Practice Config</h4>
+                            <p class="text-sm text-[#B3B3B3] project-subtitle">Configuration • Axteroid</p>
+                        </div>
+                    </a>
+
+                    <!-- Factions Config -->
+                    <a href="#" class="p-2 flex items-center gap-3 hover-card rounded-md" data-project-id="factions">
+                        <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-red-500 rounded flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="shield" class="h-6 w-6"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4 class="font-bold text-white project-title">Factions Config</h4>
+                            <p class="text-sm text-[#B3B3B3] project-subtitle">Configuration • Axteroid</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Add the custom scrollbar -->
+                <div class="library-scrollbar">
+                    <div class="library-scrollbar-thumb" id="scrollThumb"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="ml-[280px] flex-1 bg-gradient-to-b from-[#1F1F1F] to-[#121212] min-h-screen">
+            <!-- Content -->
+            <div id="mainContent" class="min-h-screen bg-[#121212]">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Update pageData with enhanced content and layout info
+        const pageData = {
+            'home': {
+                title: 'Axteroid',
+                subtitle: 'From Georgia',
+                description: 'Minecraft Configurator',
+                gradient: 'from-[#1DB954] to-[#169C46]',
+                featuredProjects: [
+                    {
+                        title: 'SkyBlock Config',
+                description: 'Complete configuration pack for SkyBlock servers',
+                        image: 'assets/skyblock.jpg',
+                        stats: { downloads: '1.2M+', rating: '4.9/5' }
+                    },
+                    {
+                        title: 'KitPvP Config',
+                        description: 'Advanced PvP system configuration',
+                        image: 'assets/kitpvp.jpg',
+                        stats: { downloads: '800K+', rating: '4.8/5' }
+                    }
+                ],
+                stats: [
+                    { label: 'Projects', value: '10+' },
+                    { label: 'Total Downloads', value: '5M+' },
+                    { label: 'Years Experience', value: '5+' },
+                    { label: 'Happy Clients', value: '1000+' }
+                ]
+            },
+            'experience': {
+                title: 'Experience',
+                description: 'My journey in Minecraft configuration and development',
+                gradient: 'from-purple-500 to-blue-500',
+                content: {
+                    featured: [
+                        {
+                            title: 'Lead Configuration Developer',
+                            company: 'ServerCraft',
+                            period: '2022 - Present',
+                            image: 'assets/server-craft.jpg', // Add your image
+                            tags: ['Configuration', 'System Design', 'Team Leadership'],
+                            link: '#'
+                        },
+                        {
+                            title: 'Senior Configurator',
+                            company: 'MCHosting',
+                            period: '2020 - 2022',
+                            image: 'assets/mc-hosting.jpg', // Add your image
+                            tags: ['Plugin Development', 'Performance', 'Architecture'],
+                            link: '#'
+                        },
+                        {
+                            title: 'Freelance Developer',
+                            company: 'Self-employed',
+                            period: '2018 - 2020',
+                            image: 'assets/freelance.jpg', // Add your image
+                            tags: ['Custom Systems', 'Client Projects', 'Consulting'],
+                            link: '#'
+                        }
+                    ]
+                }
+            },
+            'contact': {
+                title: 'Contact Me',
+                description: 'Get in touch for collaboration or custom projects',
+                gradient: 'from-green-500 to-emerald-500',
+                socialLinks: [
+                    { platform: 'Discord', username: 'axteroid#0000', icon: 'message-circle', link: 'https://discord.com/users/yourid' },
+                    { platform: 'GitHub', username: 'axteroid', icon: 'github', link: 'https://github.com/yourusername' },
+                    { platform: 'Twitter', username: '@axteroid', icon: 'twitter', link: 'https://twitter.com/yourusername' },
+                    { platform: 'Email', username: 'contact@axteroid.com', icon: 'mail', link: 'mailto:contact@axteroid.com' }
+                ],
+                availability: {
+                    timezone: 'EST (UTC-5)',
+                    hours: 'Monday - Friday: 9AM - 5PM EST',
+                    response: '24-48 Hours',
+                    status: 'Available for Work'
+                }
+            },
+            'projects': {
+                title: 'BuiltByBit Store',
+                description: 'Premium Minecraft Configurations',
+                gradient: 'from-[#1DB954] to-[#169C46]',
+                stats: {
+                    totalSales: '10K+',
+                    totalReviews: '1.2K+',
+                    averageRating: '4.9/5',
+                    memberSince: '2020'
+                },
+                featured: [
+                    {
+                        title: 'SkyBlock Configuration',
+                        price: '$24.99',
+                        image: 'assets/skyblock.jpg',
+                stats: {
+                            sales: '1.2K+',
+                            rating: '5.0/5',
+                            reviews: '245'
+                        },
+                        tags: ['Premium', 'Full Access', 'Updates']
+                    },
+                    {
+                        title: 'KitPvP Configuration',
+                        price: '$19.99',
+                        image: 'assets/kitpvp.jpg',
+                stats: {
+                            sales: '800+',
+                            rating: '4.9/5',
+                            reviews: '180'
+                        },
+                        tags: ['Premium', 'Full Access', 'Support']
+                    },
+                    // Add more products as needed
+                ]
+            }
+        };
+
+        // Replace the existing DOMContentLoaded event listener with this updated version
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Lucide icons
+            lucide.createIcons();
+
+            // Attach project click handlers
+            attachProjectClickHandlers();
+
+            // Navigation links
+            const navLinks = document.querySelectorAll('a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = link.getAttribute('href').replace('#', '');
+                    const targetId = pageId || 'home';
+                    if (pageData[targetId]) {
+                        updateContent(targetId, 'page');
+                        
+                        // Update active state
+                        navLinks.forEach(l => l.classList.remove('text-white'));
+                        link.classList.add('text-white');
+                    }
+                });
+            });
+
+            // Load initial content
+            const hash = window.location.hash.replace('#', '') || 'home';
+            updateContent(hash, 'page');
+
+            // Initialize social link handlers
+            initializeSocialHandlers();
+
+            // Add this line
+            initializeSidebarToggle();
+        });
+
+        // Update the initializeSocialHandlers function to handle cleanup
+        function initializeSocialHandlers() {
+            const githubLink = document.querySelector('a[href*="github.com"]');
+            const discordLink = document.querySelector('a[href*="discord.com"]');
+
+            // Remove existing listeners first (if any)
+            const newGithubLink = githubLink.cloneNode(true);
+            const newDiscordLink = discordLink.cloneNode(true);
+            
+            githubLink.parentNode.replaceChild(newGithubLink, githubLink);
+            discordLink.parentNode.replaceChild(newDiscordLink, discordLink);
+
+            // Add new listeners
+            newGithubLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showGitHubOverlay();
+            });
+
+            newDiscordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showDiscordOverlay();
+            });
+        }
+
+        // Update the showGitHubOverlay function to handle cleanup
+        function showGitHubOverlay() {
+            // Remove any existing overlays first
+            const existingOverlay = document.querySelector('.github-overlay');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-black/80 z-50 flex items-center justify-center github-overlay';
+            overlay.innerHTML = `
+                <div class="bg-[#181818] rounded-lg max-w-2xl w-full mx-4 overflow-hidden transform transition-all relative">
+                    <!-- Close button - Updated styling -->
+                    <button class="absolute top-4 right-4 z-50 p-2 rounded-full hover:bg-white/10 transition-colors group">
+                        <i data-lucide="x" class="h-4 w-4 text-white/60 group-hover:text-white"></i>
+                    </button>
+                    
+                    <!-- Rest of your overlay content -->
+                    <div class="h-32 bg-gradient-to-r from-[#2b2b2b] to-[#1a1a1a]"></div>
+                    
+                    <!-- Profile section -->
+                    <div class="px-8 pb-8">
+                        <!-- Avatar -->
+                        <div class="relative -mt-16 mb-4">
+                            <img src="assets/axtyyy green.png" alt="GitHub Profile" class="w-32 h-32 rounded-full border-4 border-[#181818]">
+                        </div>
+                        
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-white mb-1">Axteroid</h2>
+                                <p class="text-[#B3B3B3]">Minecraft Configuration Specialist</p>
+                            </div>
+                            <a href="https://github.com/yourusername" target="_blank" 
+                               class="px-4 py-2 bg-[#1DB954] text-black rounded-full font-medium hover:bg-[#1ed760] transition-colors">
+                                View Profile
+                            </a>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="bg-[#282828] p-4 rounded-lg">
+                                <h3 class="text-2xl font-bold text-white">50+</h3>
+                                <p class="text-[#B3B3B3] text-sm">Repositories</p>
+                            </div>
+                            <div class="bg-[#282828] p-4 rounded-lg">
+                                <h3 class="text-2xl font-bold text-white">1.2K</h3>
+                                <p class="text-[#B3B3B3] text-sm">Contributions</p>
+                            </div>
+                            <div class="bg-[#282828] p-4 rounded-lg">
+                                <h3 class="text-2xl font-bold text-white">500+</h3>
+                                <p class="text-[#B3B3B3] text-sm">Stars</p>
+                            </div>
+                        </div>
+
+                        <!-- Featured Repos -->
+                        <div>
+                            <h3 class="text-white font-bold mb-4">Featured Repositories</h3>
+                            <div class="space-y-3">
+                                <div class="bg-[#282828] p-4 rounded-lg hover:bg-[#383838] transition-colors">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="text-white font-medium">minecraft-configs</h4>
+                                            <p class="text-[#B3B3B3] text-sm">Collection of premium Minecraft configurations</p>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-[#B3B3B3] text-sm">
+                                            <span>★ 245</span>
+                                            <span>🔀 123</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Add more repos as needed -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add click handler to close button
+            overlay.querySelector('button').addEventListener('click', () => {
+                overlay.remove();
+            });
+
+            // Add click handler to close on background click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.remove();
+                }
+            });
+
+            // Add keyboard handler for Esc key
+            const handleEsc = (e) => {
+                if (e.key === 'Escape') {
+                    overlay.remove();
+                    document.removeEventListener('keydown', handleEsc);
+                }
+            };
+            document.addEventListener('keydown', handleEsc);
+
+            document.body.appendChild(overlay);
+            lucide.createIcons(); // Refresh icons to show the new X icon
+        }
+
+        function showDiscordOverlay() {
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-black/80 z-50 flex items-center justify-center';
+            overlay.innerHTML = `
+                <div class="bg-[#181818] rounded-lg max-w-2xl w-full mx-4 overflow-hidden relative">
+                    <!-- Close button - Updated styling -->
+                    <button class="absolute top-4 right-4 z-50 p-2 rounded-full hover:bg-white/10 transition-colors group">
+                        <i data-lucide="x" class="h-4 w-4 text-white/60 group-hover:text-white"></i>
+                    </button>
+                    
+                    <!-- Rest of your overlay content -->
+                    <div class="p-8">
+                        <div class="flex items-start gap-6 mb-8">
+                            <img src="assets/axtyyy green.png" alt="Discord Profile" class="w-24 h-24 rounded-full">
+                            <div class="flex-1">
+                                <h2 class="text-2xl font-bold text-white mb-2">Axteroid<span class="text-[#B3B3B3]">#0000</span></h2>
+                                <p class="text-[#1DB954] font-medium mb-4">Online</p>
+                                <div class="flex gap-3">
+                                    <a href="https://discord.com/users/yourid" target="_blank" 
+                                       class="px-4 py-2 bg-[#1DB954] text-black rounded-full font-medium hover:bg-[#1ed760] transition-colors">
+                                        Add Friend
+                                    </a>
+                                    <button class="px-4 py-2 bg-[#282828] text-white rounded-full font-medium hover:bg-[#383838] transition-colors">
+                                        Send Message
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- About Me -->
+                        <div class="bg-[#282828] rounded-lg p-6 mb-6">
+                            <h3 class="text-white font-bold mb-4">About Me</h3>
+                            <p class="text-[#B3B3B3]">Professional Minecraft Configurator specializing in server setups and custom systems. Available for collaboration and consulting.</p>
+                        </div>
+
+                        <!-- Server Status -->
+                        <div class="bg-[#282828] rounded-lg p-6">
+                            <h3 class="text-white font-bold mb-4">Discord Server</h3>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-white mb-1">Axteroid's Configuration Hub</p>
+                                    <p class="text-[#B3B3B3] text-sm">1,500+ members • 100+ online</p>
+                                </div>
+                                <button class="px-4 py-2 bg-[#1DB954] text-black rounded-full font-medium hover:bg-[#1ed760] transition-colors">
+                                    Join Server
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add the same handlers as GitHub overlay
+            const handleEsc = (e) => {
+                if (e.key === 'Escape') {
+                    overlay.remove();
+                    document.removeEventListener('keydown', handleEsc);
+                }
+            };
+            document.addEventListener('keydown', handleEsc);
+
+            overlay.querySelector('button').addEventListener('click', () => overlay.remove());
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.remove();
+            });
+
+            document.body.appendChild(overlay);
+            lucide.createIcons();
+        }
+
+        // Replace the existing attachProjectClickHandlers function with this updated version
+        function attachProjectClickHandlers() {
+            const projectLinks = document.querySelectorAll('[data-project-id]');
+            projectLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const projectId = link.getAttribute('data-project-id');
+                    
+                    // Update active state
+                    projectLinks.forEach(l => l.classList.remove('bg-[#282828]'));
+                    link.classList.add('bg-[#282828]');
+
+                    // Navigate to project page
+                    window.location.href = `projects/${projectId}.html`;
+                });
+            });
+        }
+
+        function updateActiveStates(type, activeElement) {
+            switch (type) {
+                case 'nav':
+                    document.querySelectorAll('a[href^="#"]')
+                        .forEach(l => l.classList.remove('text-white'));
+                    activeElement.classList.add('text-white');
+                    break;
+                
+                case 'project':
+                    document.querySelectorAll('[data-project-id]')
+                        .forEach(l => l.classList.remove('bg-[#282828]'));
+                    activeElement.classList.add('bg-[#282828]');
+                    break;
+                    
+                case 'filter':
+                    document.querySelectorAll('button:contains("Configs"), button:contains("Recent")')
+                        .forEach(b => b.classList.remove('bg-[#2A2A2A]'));
+                    activeElement.classList.add('bg-[#2A2A2A]');
+                    break;
+            }
+        }
+
+        function getGradient(id) {
+            const gradients = {
+                skyblock: 'from-purple-500 to-blue-500',
+                kitpvp: 'from-red-500 to-orange-500',
+                prison: 'from-green-500 to-emerald-500',
+                survival: 'from-yellow-500 to-amber-500',
+                bedwars: 'from-blue-400 to-cyan-500',
+                hub: 'from-indigo-500 to-purple-500',
+                practice: 'from-rose-500 to-pink-500',
+                factions: 'from-amber-500 to-red-500'
+            };
+            return gradients[id] || 'from-gray-500 to-gray-600';
+        }
+
+        function getIcon(id) {
+            const icons = {
+                skyblock: 'box',
+                kitpvp: 'swords',
+                prison: 'pickaxe',
+                survival: 'tree',
+                bedwars: 'swords',
+                hub: 'home',
+                practice: 'target',
+                factions: 'shield'
+            };
+            return icons[id] || 'box';
+        }
+
+        // Update the updateContent function to handle special pages
+        function updateContent(id, type = 'project') {
+            const mainContent = document.querySelector('#mainContent');
+            const data = type === 'project' ? projectData[id] : pageData[id];
+
+            if (!data) return;
+
+            if (type === 'project') {
+            mainContent.innerHTML = `
+                    <!-- Hero Section -->
+                    <div class="relative h-[400px] bg-[#121212]">
+                        <!-- Spotify-style gradient overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-b ${data.gradient} opacity-10"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/50 to-transparent"></div>
+                        
+                        <!-- Content -->
+                        <div class="relative z-10 h-full px-8 py-12">
+                            <!-- Project Badge -->
+                            <div class="flex items-center gap-2 mb-6">
+                            <span class="bg-[#1DB954] text-black px-3 py-1 text-sm font-medium rounded">Featured</span>
+                            <span class="text-[#B3B3B3]">Configuration</span>
+                        </div>
+
+                            <!-- Title Section -->
+                            <div class="space-y-4">
+                                <h1 class="text-7xl font-bold text-white">${data.title}</h1>
+                                <p class="text-2xl text-[#B3B3B3]">${data.description}</p>
+                            </div>
+                    </div>
+                </div>
+
+                <!-- Stats Bar -->
+                    <div class="px-8 py-8 border-b border-[#2a2a2a] bg-[#121212]">
+                    <div class="flex items-center gap-12">
+                        <div>
+                                <h3 class="text-3xl font-bold text-white">${data.stats.downloads}</h3>
+                            <p class="text-sm text-[#B3B3B3]">Downloads</p>
+                        </div>
+                        <div>
+                                <h3 class="text-3xl font-bold text-white">${data.stats.version}</h3>
+                            <p class="text-sm text-[#B3B3B3]">Latest Version</p>
+                        </div>
+                        <div>
+                                <h3 class="text-3xl font-bold text-white">${data.stats.price}</h3>
+                            <p class="text-sm text-[#B3B3B3]">Price</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Grid -->
+                    <div class="px-8 py-12 bg-[#121212]">
+                        <div class="grid grid-cols-2 gap-x-24 gap-y-12">
+                            ${Object.entries(data.features).map(([title, items]) => `
+                                <div class="p-6 bg-[#181818] rounded-lg hover:bg-[#282828] transition-colors">
+                                    <h2 class="text-2xl font-bold text-white mb-6">${title}</h2>
+                                    <ul class="space-y-4">
+                                    ${items.map(item => `
+                                            <li class="flex items-center gap-3 group">
+                                                <span class="text-[#1DB954] opacity-60 group-hover:opacity-100 transition-opacity">•</span>
+                                                <span class="text-[#B3B3B3] group-hover:text-white transition-colors">${item}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            } else {
+                // Page content handling
+                if (id === 'home') {
+                    mainContent.innerHTML = `
+                        <!-- Hero Section -->
+                        <div class="relative min-h-[600px] bg-[#121212] overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#1DB954]/20 via-[#121212] to-[#121212]"></div>
+                            
+                            <!-- Main Content -->
+                            <div class="relative z-10 max-w-7xl mx-auto px-8 py-20">
+                                <div class="flex items-start justify-between">
+                                    <!-- Left Side -->
+                                    <div class="space-y-6 max-w-2xl">
+                                        <h1 class="text-8xl font-bold text-white tracking-tight">${data.title}</h1>
+                                        <p class="text-3xl text-[#B3B3B3]">${data.description}</p>
+                                        <p class="text-xl text-[#B3B3B3]">${data.subtitle}</p>
+                                        
+                                        <!-- Stats Grid -->
+                                        <div class="grid grid-cols-2 gap-6 mt-12">
+                                            ${data.stats.map(stat => `
+                                                <div class="bg-[#181818] p-6 rounded-lg hover:bg-[#282828] transition-all">
+                                                    <h3 class="text-4xl font-bold text-[#1DB954]">${stat.value}</h3>
+                                                    <p class="text-[#B3B3B3] mt-2">${stat.label}</p>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Side - Featured Projects Preview -->
+                                    <div class="w-[500px]">
+                                        <h2 class="text-2xl font-bold text-white mb-6">Featured Projects</h2>
+                                        <div class="space-y-4">
+                                            ${data.featuredProjects.map(project => `
+                                                <div class="group bg-[#181818] rounded-lg overflow-hidden hover:bg-[#282828] transition-all duration-300">
+                                                    <div class="aspect-video w-full overflow-hidden">
+                                                        <img 
+                                                            src="${project.image}" 
+                                                            alt="${project.title}"
+                                                            class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all"
+                                                        />
+                                                    </div>
+                                                    <div class="p-6">
+                                                        <h3 class="text-xl font-bold text-white mb-2">${project.title}</h3>
+                                                        <p class="text-[#B3B3B3] mb-4">${project.description}</p>
+                                                        <div class="flex justify-between text-sm">
+                                                            <span class="text-[#1DB954]">${project.stats.downloads} Downloads</span>
+                                                            <span class="text-[#B3B3B3]">${project.stats.rating} Rating</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (id === 'experience') {
+                    mainContent.innerHTML = `
+                        <div class="min-h-screen bg-[#121212] px-8 py-12">
+                            <div class="max-w-7xl mx-auto">
+                                <!-- Header -->
+                                <div class="flex justify-between items-end mb-12">
+                                    <div>
+                                        <h1 class="text-5xl font-bold text-white mb-4">${data.title}</h1>
+                                        <p class="text-[#B3B3B3] text-xl">${data.description}</p>
+                                    </div>
+                                    <button class="px-4 py-2 rounded-full bg-[#1DB954] text-black font-medium hover:bg-[#1ed760] transition-colors">
+                                        Download Resume
+                                    </button>
+                                </div>
+
+                                <!-- Experience Grid -->
+                                <div class="grid grid-cols-2 gap-6">
+                                    ${data.content.featured.map(job => `
+                                        <div class="group relative bg-[#181818] rounded-lg overflow-hidden hover:bg-[#282828] transition-all duration-300 transform hover:-translate-y-1">
+                                            <div class="aspect-video w-full overflow-hidden">
+                                                <img 
+                                                    src="${job.image}" 
+                                                    alt="${job.company}"
+                                                    class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                                />
+                                            </div>
+                                            <div class="p-6">
+                                                <div class="flex justify-between items-start mb-4">
+                                                    <div>
+                                                        <h3 class="text-xl font-bold text-white mb-1">${job.title}</h3>
+                                                        <p class="text-[#1DB954]">${job.company}</p>
+                                                    </div>
+                                                    <span class="text-[#B3B3B3] text-sm">${job.period}</span>
+                                                </div>
+                                                <div class="flex flex-wrap gap-2 mt-4">
+                                                    ${job.tags.map(tag => `
+                                                        <span class="px-3 py-1 bg-[#282828] group-hover:bg-[#383838] text-[#B3B3B3] text-sm rounded-full">
+                                                            ${tag}
+                                                        </span>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <!-- Skills Section -->
+                                <div class="mt-16">
+                                    <h2 class="text-2xl font-bold text-white mb-8">Technical Skills</h2>
+                                    <div class="grid grid-cols-4 gap-4">
+                                        ${[
+                                            { name: 'Server Configuration', level: 95 },
+                                            { name: 'Plugin Development', level: 88 },
+                                            { name: 'System Architecture', level: 85 },
+                                            { name: 'Performance Optimization', level: 90 },
+                                            { name: 'Custom Systems', level: 92 },
+                                            { name: 'Team Leadership', level: 85 },
+                                            { name: 'Project Management', level: 80 },
+                                            { name: 'Client Relations', level: 88 }
+                                        ].map(skill => `
+                                            <div class="bg-[#181818] p-4 rounded-lg hover:bg-[#282828] transition-colors">
+                                                <div class="flex justify-between items-center mb-2">
+                                                    <span class="text-[#B3B3B3]">${skill.name}</span>
+                                                    <span class="text-[#1DB954]">${skill.level}%</span>
+                                                </div>
+                                                <div class="h-1 bg-[#282828] rounded-full overflow-hidden">
+                                                    <div 
+                                                        class="h-full bg-[#1DB954] rounded-full transition-all duration-500"
+                                                        style="width: ${skill.level}%"
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (id === 'contact') {
+                    mainContent.innerHTML = `
+                        <div class="min-h-screen bg-[#121212] px-8 py-12">
+                            <div class="max-w-7xl mx-auto">
+                                <!-- Header -->
+                                <div class="text-center mb-16">
+                                    <h1 class="text-6xl font-bold text-white mb-4">${data.title}</h1>
+                                    <p class="text-xl text-[#B3B3B3]">${data.description}</p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-8">
+                                    <!-- Social Links -->
+                                    <div class="space-y-6">
+                                        <h2 class="text-2xl font-bold text-white mb-8">Connect With Me</h2>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            ${data.socialLinks.map(social => `
+                                                <a 
+                                                    href="${social.link}" 
+                                                    class="group bg-[#181818] p-6 rounded-lg hover:bg-[#282828] transition-all"
+                                                >
+                                                    <i data-lucide="${social.icon}" class="h-8 w-8 text-[#1DB954] mb-4"></i>
+                                                    <h3 class="text-white font-bold mb-2">${social.platform}</h3>
+                                                    <p class="text-[#B3B3B3] group-hover:text-white transition-colors">${social.username}</p>
+                                                </a>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <!-- Availability Info -->
+                                    <div class="bg-[#181818] p-8 rounded-lg">
+                                        <h2 class="text-2xl font-bold text-white mb-8">Availability</h2>
+                                        <div class="space-y-6">
+                                            <div class="flex items-center justify-between p-4 bg-[#282828] rounded-lg">
+                                                <span class="text-[#B3B3B3]">Current Status</span>
+                                                <span class="text-[#1DB954] font-medium">${data.availability.status}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between p-4 bg-[#282828] rounded-lg">
+                                                <span class="text-[#B3B3B3]">Time Zone</span>
+                                                <span class="text-white">${data.availability.timezone}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between p-4 bg-[#282828] rounded-lg">
+                                                <span class="text-[#B3B3B3]">Working Hours</span>
+                                                <span class="text-white">${data.availability.hours}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between p-4 bg-[#282828] rounded-lg">
+                                                <span class="text-[#B3B3B3]">Response Time</span>
+                                                <span class="text-white">${data.availability.response}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (id === 'projects') {
+                    mainContent.innerHTML = `
+                        <div class="min-h-screen bg-[#121212]">
+                            <!-- Hero Section -->
+                            <div class="relative h-[300px] bg-[#181818] overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-br from-[#1DB954]/20 via-[#121212] to-[#121212]"></div>
+                                <div class="relative z-10 max-w-7xl mx-auto px-8 py-12">
+                                    <h1 class="text-5xl font-bold text-white mb-4">${data.title}</h1>
+                                    <p class="text-xl text-[#B3B3B3]">${data.description}</p>
+                                    
+                                    <!-- Store Stats -->
+                                    <div class="grid grid-cols-4 gap-6 mt-12">
+                                        <div class="bg-[#282828] p-4 rounded-lg">
+                                            <h3 class="text-2xl font-bold text-[#1DB954]">${data.stats.totalSales}</h3>
+                                            <p class="text-[#B3B3B3]">Total Sales</p>
+                                        </div>
+                                        <div class="bg-[#282828] p-4 rounded-lg">
+                                            <h3 class="text-2xl font-bold text-[#1DB954]">${data.stats.totalReviews}</h3>
+                                            <p class="text-[#B3B3B3]">Reviews</p>
+                                        </div>
+                                        <div class="bg-[#282828] p-4 rounded-lg">
+                                            <h3 class="text-2xl font-bold text-[#1DB954]">${data.stats.averageRating}</h3>
+                                            <p class="text-[#B3B3B3]">Avg Rating</p>
+                                        </div>
+                                        <div class="bg-[#282828] p-4 rounded-lg">
+                                            <h3 class="text-2xl font-bold text-[#1DB954]">${data.stats.memberSince}</h3>
+                                            <p class="text-[#B3B3B3]">Member Since</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Products Grid -->
+                            <div class="max-w-7xl mx-auto px-8 py-12">
+                                <div class="flex justify-between items-center mb-8">
+                                    <h2 class="text-2xl font-bold text-white">Featured Products</h2>
+                                    <a href="https://builtbybit.com/members/neuron.400885/" target="_blank" 
+                                       class="px-4 py-2 bg-[#1DB954] text-black rounded-full font-medium hover:bg-[#1ed760] transition-colors">
+                                        View All Products
+                                    </a>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-6">
+                                    ${data.featured.map(product => `
+                                        <div class="group bg-[#181818] rounded-lg overflow-hidden hover:bg-[#282828] transition-all duration-300">
+                                            <!-- Product Image -->
+                                            <div class="aspect-video w-full overflow-hidden">
+                                                <img 
+                                                    src="${product.image}" 
+                                                    alt="${product.title}"
+                                                    class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all"
+                                                />
+                                            </div>
+                                            
+                                            <!-- Product Info -->
+                                            <div class="p-6">
+                                                <div class="flex justify-between items-start mb-4">
+                                                    <h3 class="text-xl font-bold text-white">${product.title}</h3>
+                                                    <span class="text-[#1DB954] font-bold">${product.price}</span>
+                                                </div>
+                                                
+                                                <!-- Stats -->
+                                                <div class="grid grid-cols-3 gap-4 mb-4">
+                                                    <div class="text-center">
+                                                        <p class="text-[#1DB954] font-bold">${product.stats.sales}</p>
+                                                        <p class="text-sm text-[#B3B3B3]">Sales</p>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <p class="text-[#1DB954] font-bold">${product.stats.rating}</p>
+                                                        <p class="text-sm text-[#B3B3B3]">Rating</p>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <p class="text-[#1DB954] font-bold">${product.stats.reviews}</p>
+                                                        <p class="text-sm text-[#B3B3B3]">Reviews</p>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Tags -->
+                                                <div class="flex flex-wrap gap-2">
+                                                    ${product.tags.map(tag => `
+                                                        <span class="px-3 py-1 bg-[#282828] text-sm text-[#B3B3B3] rounded-full group-hover:bg-[#383838]">
+                                                            ${tag}
+                                                        </span>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <!-- Reviews Section -->
+                                <div class="mt-16">
+                                    <h2 class="text-2xl font-bold text-white mb-8">Latest Reviews</h2>
+                                    <div class="grid grid-cols-3 gap-6">
+                                        ${[
+                                            { user: 'MCServer_Pro', rating: 5, comment: 'Best configuration I\'ve ever used. Amazing support!' },
+                                            { user: 'NetworkOwner', rating: 5, comment: 'Perfectly optimized and easy to customize.' },
+                                            { user: 'ServerHost123', rating: 5, comment: 'Great value for money. Highly recommended!' }
+                                        ].map(review => `
+                                            <div class="bg-[#181818] p-6 rounded-lg hover:bg-[#282828] transition-all">
+                                                <div class="flex items-center gap-2 mb-4">
+                                                    <span class="text-[#1DB954]">★</span>
+                                                    <span class="text-white font-bold">${review.rating}.0</span>
+                                                    <span class="text-[#B3B3B3]">by ${review.user}</span>
+                                                </div>
+                                                <p class="text-[#B3B3B3]">"${review.comment}"</p>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            lucide.createIcons();
+        }
+
+        function initializeSidebarToggle() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.ml-\\[280px\\]');
+            const toggleButton = document.getElementById('sidebarToggle');
+            let isAnimating = false;
+            
+            toggleButton.addEventListener('click', () => {
+                if (isAnimating) return;
+                isAnimating = true;
+                
+                sidebar.classList.toggle('collapsed');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    mainContent.classList.remove('ml-[280px]');
+                    mainContent.classList.add('ml-[80px]');
+                } else {
+                    mainContent.classList.remove('ml-[80px]');
+                    mainContent.classList.add('ml-[280px]');
+                }
+                
+                // Use a single timeout for both directions
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 650); // Slightly longer than transition to ensure completion
+            });
+        }
+    </script>
+</body>
+</html> 

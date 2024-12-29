@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factions Configuration - Axteroid</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(
+                45deg,
+                #B91C1C,
+                #991B1B
+            );
+        }
+
+        .hero-gradient::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(0,0,0,0) 0%,
+                rgba(0,0,0,0.5) 50%,
+                #121212 100%
+            );
+            pointer-events: none;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 10px 30px -5px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        }
+
+        .feature-icon {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover .feature-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .screenshot-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+        }
+
+        .screenshot-card img {
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .screenshot-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .screenshot-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to top,
+                rgba(0,0,0,0.9) 0%,
+                rgba(0,0,0,0.5) 50%,
+                transparent 100%
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .screenshot-card:hover .screenshot-overlay {
+            opacity: 1;
+        }
+
+        /* Spotify-style scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            border: 3px solid #121212;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Spotify-style button hover effect */
+        .spotify-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spotify-button::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to right,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .spotify-button:hover::after {
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+<body class="bg-[#121212]">
+    <div class="min-h-screen">
+        <!-- Hero Section -->
+        <div class="relative min-h-[800px] hero-gradient">
+            <!-- Navigation -->
+            <nav class="fixed top-0 w-full z-50 bg-black/10 backdrop-blur-md border-b border-white/5">
+                <div class="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+                    <a href="../index.html" class="flex items-center gap-4 text-white/80 hover:text-white transition-colors group">
+                        <div class="p-2 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors">
+                            <i data-lucide="arrow-left" class="h-5 w-5"></i>
+                        </div>
+                        <span class="font-medium">Back to Projects</span>
+                    </a>
+                    <div class="flex items-center gap-4">
+                        <button class="spotify-button p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors" title="Share">
+                            <i data-lucide="share-2" class="h-5 w-5"></i>
+                        </button>
+                        <a href="https://builtbybit.com/resources/factions-configuration.12345" target="_blank" 
+                           class="spotify-button px-6 py-2 bg-white hover:bg-white/90 text-black rounded-full font-medium transition-colors">
+                            Purchase ($27.99)
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Hero Content -->
+            <div class="absolute inset-0 flex items-center z-10">
+                <div class="max-w-7xl mx-auto px-8 w-full">
+                    <div class="flex items-center gap-16">
+                        <!-- Project Icon -->
+                        <div class="w-[400px] aspect-square bg-black/20 backdrop-blur-md rounded-3xl p-12 card-hover border border-white/5">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i data-lucide="shield" class="w-48 h-48 text-white feature-icon"></i>
+                            </div>
+                        </div>
+
+                        <!-- Project Info -->
+                        <div class="flex-1">
+                            <div class="space-y-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="px-4 py-1 bg-white/10 rounded-full text-sm font-medium">Featured</span>
+                                    <span class="text-white/60">Configuration</span>
+                                </div>
+                                <h1 class="text-7xl font-bold tracking-tight">Factions Configuration</h1>
+                                <p class="text-2xl text-white/80 max-w-2xl leading-relaxed">Advanced factions setup with custom features</p>
+                                
+                                <!-- Quick Stats -->
+                                <div class="flex gap-8 mt-8">
+                                    
+        <div class="stats-card bg-black/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-center gap-3">
+                <div class="p-3 rounded-full bg-white/10">
+                    <i data-lucide="download" class="h-5 w-5 text-#FCA5A5"></i>
+                </div>
+                <div>
+                    <p class="text-4xl font-bold">750K+</p>
+                    <p class="text-white/60">Downloads</p>
+                </div>
+            </div>
+        </div>
+        <div class="stats-card bg-black/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-center gap-3">
+                <div class="p-3 rounded-full bg-white/10">
+                    <i data-lucide="star" class="h-5 w-5 text-#FCA5A5"></i>
+                </div>
+                <div>
+                    <p class="text-4xl font-bold">4.9/5</p>
+                    <p class="text-white/60">Rating</p>
+                </div>
+            </div>
+        </div>
+        <div class="stats-card bg-black/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-center gap-3">
+                <div class="p-3 rounded-full bg-white/10">
+                    <i data-lucide="users" class="h-5 w-5 text-#FCA5A5"></i>
+                </div>
+                <div>
+                    <p class="text-4xl font-bold">1.2K+</p>
+                    <p class="text-white/60">Users</p>
+                </div>
+            </div>
+        </div>
+    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-8 -mt-32 relative z-20 space-y-32 pb-32">
+            <!-- Features Grid -->
+            <section>
+                <h2 class="text-3xl font-bold mb-12">Key Features</h2>
+                <div class="grid grid-cols-3 gap-6">
+                    
+            <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-8">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 mb-6 w-fit">
+                    <i data-lucide="map-pin" 
+                       class="h-8 w-8 text-#FCA5A5"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Custom Claims</h3>
+                <p class="text-white/60 leading-relaxed">Enhanced custom claims with custom configurations and settings.</p>
+            </div>
+        
+            <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-8">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 mb-6 w-fit">
+                    <i data-lucide="zap" 
+                       class="h-8 w-8 text-#FCA5A5"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Power System</h3>
+                <p class="text-white/60 leading-relaxed">Enhanced power system with custom configurations and settings.</p>
+            </div>
+        
+            <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-8">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 mb-6 w-fit">
+                    <i data-lucide="swords-crossed" 
+                       class="h-8 w-8 text-#FCA5A5"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Faction Wars</h3>
+                <p class="text-white/60 leading-relaxed">Enhanced faction wars with custom configurations and settings.</p>
+            </div>
+        
+            <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-8">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 mb-6 w-fit">
+                    <i data-lucide="flag" 
+                       class="h-8 w-8 text-#FCA5A5"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Territory Control</h3>
+                <p class="text-white/60 leading-relaxed">Enhanced territory control with custom configurations and settings.</p>
+            </div>
+        
+            <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-8">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 mb-6 w-fit">
+                    <i data-lucide="sparkle" 
+                       class="h-8 w-8 text-#FCA5A5"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Custom Enchants</h3>
+                <p class="text-white/60 leading-relaxed">Enhanced custom enchants with custom configurations and settings.</p>
+            </div>
+        
+            <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-8">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 mb-6 w-fit">
+                    <i data-lucide="bomb" 
+                       class="h-8 w-8 text-#FCA5A5"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Raid Events</h3>
+                <p class="text-white/60 leading-relaxed">Enhanced raid events with custom configurations and settings.</p>
+            </div>
+        
+            <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-8">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 mb-6 w-fit">
+                    <i data-lucide="egg" 
+                       class="h-8 w-8 text-#FCA5A5"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Custom Spawners</h3>
+                <p class="text-white/60 leading-relaxed">Enhanced custom spawners with custom configurations and settings.</p>
+            </div>
+        
+            <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-8">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 mb-6 w-fit">
+                    <i data-lucide="shopping-cart" 
+                       class="h-8 w-8 text-#FCA5A5"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Shop System</h3>
+                <p class="text-white/60 leading-relaxed">Dynamic shop system with custom categories and prices.</p>
+            </div>
+        
+                </div>
+            </section>
+
+            <!-- Screenshots -->
+            <section>
+                <h2 class="text-3xl font-bold mb-12">Screenshots</h2>
+                <div class="grid grid-cols-3 gap-6">
+                    
+        <div class="screenshot-card card-hover relative">
+            
+        <div class="animate-pulse bg-white/5 absolute inset-0">
+            <div class="h-full w-full bg-gradient-to-r from-white/5 to-white/10 animate-shimmer"></div>
+        </div>
+    
+            <img 
+                src="https://i.imgur.com/W8kVn2W.png" 
+                alt="Territory management and claims map" 
+                class="w-full aspect-video object-cover relative z-10"
+                loading="lazy"
+                onload="this.previousElementSibling.remove()"
+            >
+            <div class="screenshot-overlay flex items-end p-6">
+                <div>
+                    <h4 class="text-lg font-bold mb-2">Screenshot 1</h4>
+                    <p class="text-white/60">Territory management and claims map</p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="screenshot-card card-hover relative">
+            
+        <div class="animate-pulse bg-white/5 absolute inset-0">
+            <div class="h-full w-full bg-gradient-to-r from-white/5 to-white/10 animate-shimmer"></div>
+        </div>
+    
+            <img 
+                src="https://i.imgur.com/Y9nM4Yp.png" 
+                alt="Faction war and power system" 
+                class="w-full aspect-video object-cover relative z-10"
+                loading="lazy"
+                onload="this.previousElementSibling.remove()"
+            >
+            <div class="screenshot-overlay flex items-end p-6">
+                <div>
+                    <h4 class="text-lg font-bold mb-2">Screenshot 2</h4>
+                    <p class="text-white/60">Faction war and power system</p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="screenshot-card card-hover relative">
+            
+        <div class="animate-pulse bg-white/5 absolute inset-0">
+            <div class="h-full w-full bg-gradient-to-r from-white/5 to-white/10 animate-shimmer"></div>
+        </div>
+    
+            <img 
+                src="https://i.imgur.com/Z2mX4Rp.png" 
+                alt="Raid events and rewards interface" 
+                class="w-full aspect-video object-cover relative z-10"
+                loading="lazy"
+                onload="this.previousElementSibling.remove()"
+            >
+            <div class="screenshot-overlay flex items-end p-6">
+                <div>
+                    <h4 class="text-lg font-bold mb-2">Screenshot 3</h4>
+                    <p class="text-white/60">Raid events and rewards interface</p>
+                </div>
+            </div>
+        </div>
+    
+                </div>
+            </section>
+
+            <!-- Reviews -->
+            
+        <section>
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-3xl font-bold">User Reviews</h2>
+                <a href="https://builtbybit.com/resources/factions-configuration.12345/reviews" 
+                   target="_blank"
+                   class="text-white/60 hover:text-white transition-colors group flex items-center gap-2">
+                    View all reviews
+                    <i data-lucide="arrow-right" class="h-4 w-4 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-3 gap-6">
+                
+        <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <img src="https://i.imgur.com/8kVn2W8.png" 
+                     class="w-12 h-12 rounded-full bg-white/10"
+                     loading="lazy">
+                <div>
+                    <h4 class="font-bold">MCServer_Pro</h4>
+                    <div class="flex items-center gap-1 text-#FCA5A5">
+                        ★★★★★
+                    </div>
+                </div>
+            </div>
+            <p class="text-white/80 leading-relaxed">Best configuration I've ever used. Amazing support!</p>
+        </div>
+    
+        <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <img src="https://i.imgur.com/9nM4Yp9.png" 
+                     class="w-12 h-12 rounded-full bg-white/10"
+                     loading="lazy">
+                <div>
+                    <h4 class="font-bold">NetworkOwner</h4>
+                    <div class="flex items-center gap-1 text-#FCA5A5">
+                        ★★★★★
+                    </div>
+                </div>
+            </div>
+            <p class="text-white/80 leading-relaxed">Perfectly optimized and easy to customize.</p>
+        </div>
+    
+        <div class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <img src="https://i.imgur.com/2mX4Rp2.png" 
+                     class="w-12 h-12 rounded-full bg-white/10"
+                     loading="lazy">
+                <div>
+                    <h4 class="font-bold">ServerHost123</h4>
+                    <div class="flex items-center gap-1 text-#FCA5A5">
+                        ★★★★★
+                    </div>
+                </div>
+            </div>
+            <p class="text-white/80 leading-relaxed">Great value for money. Highly recommended!</p>
+        </div>
+    
+            </div>
+        </section>
+    
+
+            <!-- Related Projects -->
+            <section class="pt-16 border-t border-white/10">
+                <h2 class="text-3xl font-bold mb-12">Similar Projects</h2>
+                <div class="grid grid-cols-3 gap-6">
+                    
+        <a href="skyblock.html" class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="p-4 rounded-xl bg-gradient-to-br from-#4F46E5 to-#7C3AED">
+                    <i data-lucide="box" class="h-6 w-6 text-white"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold">SkyBlock Configuration</h4>
+                    <p class="text-white/60">Configuration</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+                <span class="text-white/60">1.2M+ downloads</span>
+                <span class="text-#818CF8">$24.99</span>
+            </div>
+        </a>
+    
+        <a href="kitpvp.html" class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="p-4 rounded-xl bg-gradient-to-br from-#DC2626 to-#EA580C">
+                    <i data-lucide="swords" class="h-6 w-6 text-white"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold">KitPvP Configuration</h4>
+                    <p class="text-white/60">Configuration</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+                <span class="text-white/60">800K+ downloads</span>
+                <span class="text-#F87171">$19.99</span>
+            </div>
+        </a>
+    
+        <a href="prison.html" class="card-hover bg-black/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="p-4 rounded-xl bg-gradient-to-br from-#059669 to-#047857">
+                    <i data-lucide="pickaxe" class="h-6 w-6 text-white"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold">Prison Configuration</h4>
+                    <p class="text-white/60">Configuration</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+                <span class="text-white/60">950K+ downloads</span>
+                <span class="text-#34D399">$21.99</span>
+            </div>
+        </a>
+    
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Share functionality
+        document.querySelector('.spotify-button[title="Share"]').addEventListener('click', async () => {
+            try {
+                await navigator.share({
+                    title: 'Factions Configuration',
+                    text: 'Advanced factions setup with custom features',
+                    url: window.location.href
+                });
+            } catch (err) {
+                // Fallback: Copy to clipboard
+                await navigator.clipboard.writeText(window.location.href);
+                alert('Link copied to clipboard!');
+            }
+        });
+    </script>
+</body>
+</html> 
